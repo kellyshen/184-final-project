@@ -15,7 +15,7 @@ We hope to deliver:
 2. Camera movements / notion blur in animations. 
 3. Experiments by tweaking the constitutive model of snow.
 
-The results will be benchmarked by comparing the results to real-life videos.
+The results will be benchmarked against real-life videos.
 
 ### Schedule
 _April 14_ 
@@ -36,13 +36,13 @@ _May 5_
 
 ### Resources 
 
-Snow simulation by Stomakhin et al:
+- Snow simulation by Stomakhin et al:
 https://disney-animation.s3.amazonaws.com/uploads/production/publication_asset/94/asset/SSCTS13_2.pdf 
 
-Technical paper regarding the constitutive equation of snow:
+- Technical paper regarding the constitutive equation of snow:
 https://disney-animation.s3.amazonaws.com/uploads/production/publication_asset/96/asset/siggraph2013_tech_report.pdf
 
-POVRay Raytracer:
+- POVRay Raytracer:
 http://www.povray.org/
 
 ### Computing hardware
