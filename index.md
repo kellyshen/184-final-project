@@ -1,37 +1,50 @@
-## Welcome to GitHub Pages
+# Snow Simulation
+Chang Yoon Park, Kelly Shen
 
-You can use the [editor on GitHub](https://github.com/kellyshen/184-snow-simulation/edit/master/index.md) to maintain and preview the content for your website in Markdown files.
+### Summary
+Our project focuses on simulating the physical behavior of materials using the Material Point Method (MPM), and rendering the results with volumetric rendering techniques. Various numerical experiments, including snow simulations, are performed to visualize the effectiveness of the method.
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+### Problem Description
+In modern 3D animations, simulations of continuum models such as fluids, solids, and granular materials through methods that can handle wide-ranging properties are crucial to achieve realistic effects. Specialized solvers are often used to handle a single behavior, but are inaequate for materials like snow that have varying phases. The challenge we face is correctly implementing a numerical scheme that will handle fracture and large nonlinear behaviors. We implement a MPM framework to tackle such problems, and ray-trace the final results to obtain realistic looking animations. 
 
-### Markdown
+### Goals & Deliverables
+We plan to deliver basic (but correctly implemented) snow simulation results, such as snowball smashing. We will create a high resolution animation of the snowball trajectory including while it is flying in air, when it smashes, and the pieces of snow breaking apart/falling. This involves a correctly implemented MPM framework as well as a functioning volumetric rendering setup.
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+We hope to deliver:
+1. More materials, such as viscoelastic fluids. 
+2. Camera movements / notion blur in animations. 
+3. Experiments by tweaking the constitutive model of snow.
 
-```markdown
-Syntax highlighted code block
+The results will be benchmarked by comparing the results to real-life videos.
 
-# Header 1
-## Header 2
-### Header 3
+### Schedule
+_April 14_ 
+- Complete explicit time stepping MPM framework.
+- Render a static snowball with hypothetical data (setting up volumetric rendering system).
 
-- Bulleted
-- List
+_April 21_
+- Complete implicit time stepping MPM framework.
+- Produce snowball smashing animations.
 
-1. Numbered
-2. List
+_April 28_
+- Produce some more scenes, such as rigid-body interactions.
+- Implement camera movement and more involved lighting effects.
 
-**Bold** and _Italic_ and `Code` text
+_May 5_
+- (If ahead of schedule) Produce other material models, such as viscoelastic fluids.
+- Compile the presentation.
 
-[Link](url) and ![Image](src)
-```
+### Resources 
 
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
+Snow simulation by Stomakhin et al:
+https://disney-animation.s3.amazonaws.com/uploads/production/publication_asset/94/asset/SSCTS13_2.pdf 
 
-### Jekyll Themes
+Technical paper regarding the constitutive equation of snow:
+https://disney-animation.s3.amazonaws.com/uploads/production/publication_asset/96/asset/siggraph2013_tech_report.pdf
 
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/kellyshen/184-snow-simulation/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
+POVRay Raytracer:
+http://www.povray.org/
 
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+### Computing hardware
+- Linux Desktop Machine / Macbooks for code development/debugging.
+- AWS instance for animation rendering / high resolution numerical simulations.
