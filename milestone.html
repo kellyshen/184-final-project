@@ -1,0 +1,40 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
+<html>
+<head>
+<title>CS184 Milestone</title>
+<script type="text/x-mathjax-config">
+  MathJax.Hub.Config({tex2jax: {inlineMath: [['$','$'], ['\\(','\\)']]}});
+</script>
+<script type="text/javascript"
+  src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML">
+</script>
+</head>
+
+<body>
+<h2>A Study on Realistic Physical Modeling of Snow With the Material Point Method</h2>
+<h4>CHANG YOONG PARK and KELLY SHEN, University of California, Berkeley</h4>
+
+<p>In modern computer based animation, it is important to create realistic physical models of various continua, such as solids and fluids. For example, an elasto-plastic work function derived from the Prager-Drucker type plasticity crtiteria coupled with the material point method with appropriate parameters are capable of generating realistic looking snow and sand animations (Stomakhin et al.). The material point method was originally used in the engineering literature as a mesh-free method for solving continuum equations in a weak-formed fashion, similar to that of the Finite Element Method (FEM) (Sulskly et al.). Its background grid provides a subset of basis functions to evaluate various physical quantities <i>(a continuum scratch-pad)</i>, and handles collision and up to a certain amount, fracture, automatically. This makes MPM an extremely appealing approach for creating phyisical models that undergo dramatical changes in terms of geometry. It should be also noted that in MPM, we can directly work with the deformation gradient ($\mathbf{F}$)
+In this report, we explore the space of applicable constitutive equations applicable to the material point method, and show that the continuum-based method is capable of producing realistic simulations. We study further on how the initial placement of the material points effect the physics of the snow.</p>
+
+<sub>Additional Key Words and Phrases: Physical Modeling, Material Point Method
+<br><br><b>ACM Reference format:</b>
+<br>Chang Yoon Park and Kelly Shen. 2017. A Study on Realistic Physical Modeling of Snow With the Material Point Method. 1, 1, Article 1 (April 2017), 4 pages.
+<br><a href="https://doi.org/10.1145/nnnnnnn.nnnnnnn">https://doi.org/10.1145/nnnnnnn.nnnnnnn</a></sub>
+<p></p>
+
+<hr>
+
+<h4>INTRODUCTION</h4>
+<p>The Material Point Method, originated from the engineering literature,
+is a mesh-free method with a cartesian grid layered on top of the simulation domain.
+MPM provides a robust setup for simulating various physical models, including fluids and 
+solids.<br><br>
+In this article, we extend on the work by Stomakhin et al., and demonstrate a physical problem involving the Newtonian physics of snow. 
+<br><br>
+The main work of this article can be summarized as follows.</p>
+<ul>
+  <li>Implementation of the Elasto-Plastic work function for the Cauchy-Stress.</li>
+  <li>Semi-Implicit time stepping scheme with the Hessian of the work function, with respect to the deformation gradients of each material point.</li>
+  <li>Study on how initial particle placements effect the physics.</li>
+</ul>
