@@ -10,7 +10,7 @@
 
 <body>
 <h2>A Study on Realistic Physical Modeling of Snow With the Material Point Method</h2>
-<h4>CHANG YOONG PARK and KELLY SHEN, University of California, Berkeley</h4>
+<h4>CHANG YOON PARK and KELLY SHEN, University of California, Berkeley</h4>
 
 <p>In modern computer based animation, it is important to create realistic physical models of various continua, such as solids and fluids. For example, an elasto-plastic work function derived from the Prager-Drucker type plasticity crtiteria coupled with the material point method with appropriate parameters are capable of generating realistic looking snow and sand animations (Stomakhin et al.). The material point method was originally used in the engineering literature as a mesh-free method for solving continuum equations in a weak-formed fashion, similar to that of the Finite Element Method (FEM) (Sulskly et al.). Its background grid provides a subset of basis functions to evaluate various physical quantities <i>(a continuum scratch-pad)</i>, and handles collision and up to a certain amount, fracture, automatically. This makes MPM an extremely appealing approach for creating phyisical models that undergo dramatical changes in terms of geometry. It should be also noted that in MPM, we can directly work with the deformation gradient ($\mathbf{F}$)
 In this report, we explore the space of applicable constitutive equations applicable to the material point method, and show that the continuum-based method is capable of producing realistic simulations. We study further on how the initial placement of the material points effect the physics of the snow.</p>
@@ -55,7 +55,7 @@ $$\mathbf{F}=\mathbf{RU},$$
 
 also known as the <i>Polar Decomposition</i>. The polar decomposition states that every deformation of a infinitesimal material point can be splitted into two transformations, one involving the rotational deformation ($\mathbf{R}$) and one involving the "stretch" associated with that rotation ($\mathbf{U}$). One other decomposition we are interested in is the <i>Singular Value Decomposition</i>, also frequently abbreviated as SVD: 
 $$\mathbf{F}=\mathbf{{V_1} \Sigma {V_2}^T}$$
-. This decomposition returns two rotational components $\mathbf{V_1}$ and $\mathbf{V_2}$, with a diagonal singular value tensor $\mathbf{\Sigma}$. Avoiding the details, the singular values of the deformation gradient in the context of continuum mechanics indicate the principal stretches and the pricipal compression rates of a certain material point. Employing multiplicative plastic deformation models assuming $\mathbf{F=F_E F_P}$, one can apply SVD on the elastic part of the deformation gradient $\mathbf{F_E}$ to obtain the corresponding stretches and compression rates, and if those quantities exceed the stretch/compression limit, simply dump the excessive strains onto the plastic part of the deformation gradient $\mathbf{F_P}$. One other useful physical quantity is the determinant of $\mathbf{F}$, often called the <i>Jacobian</i>:
+. This decomposition returns two rotational components $\mathbf{V_1}$ \text{ and } $\mathbf{V_2}$, with a diagonal singular value tensor $\mathbf{\Sigma}$. Avoiding the details, the singular values of the deformation gradient in the context of continuum mechanics indicate the principal stretches and the pricipal compression rates of a certain material point. Employing multiplicative plastic deformation models assuming $\mathbf{F=F_E F_P}$, one can apply SVD on the elastic part of the deformation gradient $\mathbf{F_E}$ to obtain the corresponding stretches and compression rates, and if those quantities exceed the stretch/compression limit, simply dump the excessive strains onto the plastic part of the deformation gradient $\mathbf{F_P}$. One other useful physical quantity is the determinant of $\mathbf{F}$, often called the <i>Jacobian</i>:
 $$J = det(\mathbf{F})$$
 Physically, the Jacobian is associated with the volumetric strain of the material point.
 
@@ -137,7 +137,24 @@ For visualization, we use the open-sourced raytracing software Mitsuba. The dens
 <br><br>
 <h4>4&emsp;EXAMPLES</h4>
 
-As a first example, we show a snowball smashing into a wall. We followed the parameters stated in Stomakhin et al: $E_0 = 1.4 \times 10^5, \theta_c = 2.5 \times 10^{-2}, \theta_s = 7.5 \times 10^{-3}, \xi = 10$, with initial particle placements random rejected sampled to a sphere.
+As a first example, we show a snowball smashing into a wall. We followed the parameters stated in Stomakhin et al: $$E_0 = 1.4 \times 10^5, \theta_c = 2.5 \times 10^{-2}, \theta_s = 7.5 \times 10^{-3}, \xi = 10$$, with initial particle placements random rejected sampled to a sphere.
+
+
+    <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/snowball1.png" width=100% />
+        </td>
+        <td align="middle">
+        <img src="images/snowball2.png" width=100% />
+        </td>
+        <td align="middle">
+        <img src="images/snowball3.png" width=100% />
+        </td>
+      </tr>
+    </table>
+  </div>  
 
 <br><br>
 <h4>5&emsp;EFFECT OF INITIAL PARTICLE PLACEMENTS</h4>
@@ -151,7 +168,9 @@ This will be further discussed in the final version.
 <br>
 <a href="https://drive.google.com/file/d/0By6WwzVVZzktQ3lQZGRPYW9JV2c/view?usp=sharing">Slides</a>
 <br>
-<a href="https://youtu.be/mNk1V3WUGZc">Video</a>
+<a href="https://youtu.be/mNk1V3WUGZc">Introduction Video</a>
+<br>
+<a href="https://www.youtube.com/watch?v=om3VhdoDeT4">Simulation Animation Only</a>
 
 <br><br>
 <hr>
