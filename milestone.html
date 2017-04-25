@@ -25,16 +25,130 @@ In this report, we explore the space of applicable constitutive equations applic
 
 <hr>
 
-<h4>INTRODUCTION</h4>
-<p>The Material Point Method, originated from the engineering literature,
+<h4>1&emsp;INTRODUCTION</h4>
+The Material Point Method, originated from the engineering literature,
 is a mesh-free method with a cartesian grid layered on top of the simulation domain.
 MPM provides a robust setup for simulating various physical models, including fluids and 
 solids.<br><br>
 In this article, we extend on the work by Stomakhin et al., and demonstrate a physical problem involving the Newtonian physics of snow. 
 <br><br>
-The main work of this article can be summarized as follows.</p>
+The main work of this article can be summarized as follows:</p>
 <ul>
   <li>Implementation of the Elasto-Plastic work function for the Cauchy-Stress.</li>
   <li>Semi-Implicit time stepping scheme with the Hessian of the work function, with respect to the deformation gradients of each material point.</li>
   <li>Study on how initial particle placements effect the physics.</li>
 </ul>
+
+In the original work by Stomakhin, no comments were made regarding the effects of the initial placement of the material particles, and it turns out the response of the snow is greatly dependent on the initial configurations. We will aim to provide a detailed study regarding this aspect of snow simulations, for engineers who are seeking practical snow model implementations.
+
+<br><br>
+<h4>2&emsp;SOLVING CONTINUUMS WITH MPM</h4>
+<h5>2.1&emsp;Continuum Mechanics</h5>
+The MPM framework provides a <i>strain-driven</i> framework which we can work with. In continuum mechanics, the deformation gradient $\mathbf{F}$ is defined as 
+
+    $$\mathbf{F} = \frac{\partial \mathbf{u}}{\partial \mathbf{X}}$$
+
+
+where $\mathbf{u} = \overset{-}{\mathbf{u}}(\mathbf{X})$ prescribes the displacement of the material point that is located at $\mathbf{X}$ in the original configuration. 
+<br>The gradient of the displacement with respect to the spatial coordinates can be obtain by exploiting the solution space defined in the background grid. The interpolation functions supporting the solutions is analogous to the interpolation functions used in the finite element formulations. 
+From the deformation gradient, we can obtain all the required information regarding the deformation of the continuum body. In 3D coordinates, numerous decompositions of the deformation gradient exists. In particular, we will be using the decomposition
+
+$$\mathbf{F}=\mathbf{RU},$$
+
+also known as the <i>Polar Decomposition</i>. The polar decomposition states that every deformation of a infinitesimal material point can be splitted into two transformations, one involving the rotational deformation ($\mathbf{R}$) and one involving the "stretch" associated with that rotation ($\mathbf{U}$). One other decomposition we are interested in is the <i>Singular Value Decomposition</i>, also frequently abbreviated as SVD: 
+$$\mathbf{F}=\mathbf{{V_1} \Sigma {V_2}^T}$$
+. This decomposition returns two rotational components $\mathbf{V_1}$ and $\mathbf{V_2}$, with a diagonal singular value tensor $\mathbf{\Sigma}$. Avoiding the details, the singular values of the deformation gradient in the context of continuum mechanics indicate the principal stretches and the pricipal compression rates of a certain material point. Employing multiplicative plastic deformation models assuming $\mathbf{F=F_E F_P}$, one can apply SVD on the elastic part of the deformation gradient $\mathbf{F_E}$ to obtain the corresponding stretches and compression rates, and if those quantities exceed the stretch/compression limit, simply dump the excessive strains onto the plastic part of the deformation gradient $\mathbf{F_P}$. One other useful physical quantity is the determinant of $\mathbf{F}$, often called the <i>Jacobian</i>:
+$$J = det(\mathbf{F})$$
+Physically, the Jacobian is associated with the volumetric strain of the material point.
+
+<br><br>
+<h5>2.2&emsp;Conservation Laws</h5>
+
+In continuum mechanics, we eventually desire to solve the following PDE: 
+$$ \rho \frac{D\mathbf{v}}{Dt} = -\mathbf{\nabla} \cdot \mathbf{\sigma} + \rho \mathbf{b} $$
+Where $ \frac{D\mathbf{v}}{Dt} $ is referred as the "Material Derivative" which includes the convection term, and $\mathbf{\sigma}$ is the Cauchy-Stress defined in the current configuration, and $\mathbf{b}$ is the body force acting on the material point, such as gravity. Note here that the Cauchy Stress is in general, a nonlinear function with respect to the deformation and various material parameters:
+$$\mathbf{\sigma} = \mathbf{\overset{-}{\sigma}}(\mathbf{F}, E, \nu, \textit{etc}...)$$
+
+<h5>2.3&emsp;Constitutive Equations</h5>
+There exists many ways to prescribe the behavior of a material under certain deformations. One way is by assuming a material "Work function" $\Psi(\mathbf{F})$. We assume the Cauchy-Stress to follow the below rule: 
+$$ \mathbf{\sigma} = J^{-1}\frac{\partial \Psi(\mathbf{F})}{\partial \mathbf{F}}$$
+
+In Stomakhin et al, snow is approximated with a constitutive equation inspired by the Prager-Drucker material model. The work function used here is
+
+$$ \Psi(\mathbf{F_E}, \mathbf{F_P}) = \mu(\mathbf{F_P})||\mathbf{F_E}-\mathbf{R_E}||^2_{F}+\frac{\lambda(\mathbf{F_P})}{2}{(J_E-1)^2}$$
+
+In order to enhance fracture and strain hardening induced by compression, the auther uses the following simple hardening rules for the bulk modulus and shear modulus: 
+
+$$ \mu(\mathbf{F_P}) = \mu_0 e^{\xi(1-J_P)} and  \lambda(\mathbf{F_P}) = \lambda_0 e^{\xi(1-J_P)} $$
+
+An interesting observation can be made regarding the original article by Stomakhin et al. The above model does not explicitly prescribes the fracturing locations inside the material, in contrast to other approaches such as work from Yue et al. Therefore, one must explicitly embed desired weak "fracture" locations inside the initial placement, since the fracture occurs in a smoothed out fashion following the plastic part of the deformation gradient. Although it is disputable whether the above actually captures the true mechanics in actual snow, it turns out that the above treatment successfully, and pratically produces visually stunning images.
+
+<br><br>
+<h5>2.4&emsp;Rasterization</h5>
+
+Each node on the grid point has an interpolation kernel. Here, we employ a B-Spline kernel, which is a popular option for various mesh-free methods, such as Smoothed Particle Hydrodynamics (SPH). The interpolation functions are defined as: 
+
+$$
+N(q) = \left\{\begin{array}{lr}
+        \frac{1}{2}|q|^3 - |q|^2 + \frac{2}{3},   & 0\leq q < 1\\
+        -\frac{1}{6}|q|^3+|q|^2-2|q|+\frac{4}{3}, & 1\leq q < 2\\
+        0, &\text{otherwise}
+        \end{array}\right\}
+$$
+
+Where q is the $x,y$ or $z$th component of $\mathbf{x - x_i}/h$, and $\mathbf{x_i}$ indicates the spatial location of the grid node $i$. And we can also define the gradients:
+
+$$
+\nabla_{\mathbf{x}} N(q) = \frac{1}{h} \nabla_{\mathbf{q}} N(q)
+$$
+
+The kernel centered around the grid node $i$ is then defined as
+
+$$
+w_\mathbf{i} = N(\tilde{x} - x_\mathbf{i})\cdot N(\tilde{y} - y_\mathbf{i})\cdot N(\tilde{z} - z_\mathbf{i})
+$$
+
+Note the $\frac{1}{h}$ comes from the chain rule.
+
+<br>To rasterize a physical property $a_p$ of particle $p$ onto a gridnode, we compute
+
+$$ a_\mathbf{i} = \Sigma_{p} a_p N() $$
+
+<h5>2.4&emsp;Complete Algorithm</h5>
+
+The complete procedure regarding the Material Point method can be summarized as the following: 
+<ol>
+  <li>Rasterize particle data onto the grid.</li>
+  <li>Compute grid forces (based on Cauchy-Stress) with the rasterized data and the current deformation gradient.</li>
+  <li>Update velocities on grid, based on the grid forces calculated above.</li>
+  <li>Process geometry interactions, and apply it to the grid velocities.</li>
+  <li>Solve for semi-implicit velocity updates.</li>
+  <li>Update deformation gradients on each particle, by calculating the velocity gradients on the grid nodes.</li>
+  <li>Update the particle velocities, using a combined FLIP / PIC interpolation scheme.</li>
+  <li>Update the particle positions.</li>
+</ol>
+
+&emsp;For brievity, in this report, only the critical concepts of the algorithm were explained in detail. One can refer to the original paper by Stomakhin or the PhD thesis by Jiang for more rigorous background details.
+<br><br>Also, the implicit update part requires computing the hessian of the work function with respect to the deformation gradient, and can be a painful task to implement in practice. Although a painstaking effort was put into the code in order to correctly implement this feature, we will skip the explanation of the work regarding the implicit time stepping scheme. The scheme is fully functional in our code and allows us to take relatively larger timesteps compared to explicit time stepping.
+
+<br><br>
+<h4>3&emsp;RENDERING</h4>
+
+For visualization, we use the open-sourced raytracing software Mitsuba. The density data from the grid is used for volumetric rendering, and on top of that we also render the individual particles for a more clearer visualization of the boundaries. It was particularly tricky to get this to look good in 3D. This will be further discussed in the final report.
+
+<br><br>
+<h4>4&emsp;EXAMPLES</h4>
+
+As a first example, we show a snowball smashing into a wall. We followed the parameters stated in Stomakhin et al: $E_0 = 1.4 \times 10^5, \theta_c = 2.5 \times 10^{-2}, \theta_s = 7.5 \times 10^{-3}, \xi = 10$, with initial particle placements random rejected sampled to a sphere.
+
+<br><br>
+<h4>5&emsp;EFFECT OF INITIAL PARTICLE PLACEMENTS</h4>
+
+This will be further discussed in the final version.
+
+<br><br>
+<hr>
+
+<sub>Permission to make digital or hard copies of all or part of this work for personal or classroom use is granted without fee provided that copies are not made or distributed for pro t or commercial advantage and that copies bear this notice and the full citation on the  rst page. Copyrights for components of this work owned by others than ACM must be honored. Abstracting with credit is permitted. To copy otherwise, or republish, to post on servers or to redistribute to lists, requires prior specific permission and/or a fee. Request permissions from permissions@acm.org.<br>
+&copy; 2017 Association for Computing Machinery. 
+<br>Manuscript submitted to ACM</sub>
