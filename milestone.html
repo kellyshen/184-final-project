@@ -84,7 +84,7 @@ An interesting observation can be made regarding the original article by Stomakh
 <br><br>
 <h5>2.4&emsp;Rasterization</h5>
 
-Each node on the grid point has an interpolation kernel. Here, we employ a B-Spline kernel, which is a popular option for various mesh-free methods, such as Smoothed Particle Hydrodynamics (SPH). The interpolation functions are defined as: 
+Each node on the grid point has an interpolation kernel. Here, we employ a B-Spline kernel, which is a popular option for various mesh-free methods, such as Smoothed Particle Hydrodynamics (SPH). The interpolation functions are defined as : 
 
 $$
 N(q) = \left\{\begin{array}{lr}
@@ -94,25 +94,39 @@ N(q) = \left\{\begin{array}{lr}
         \end{array}\right\}
 $$
 
-Where q is the $x,y$ or $z$th component of $\mathbf{x - x_i}/h$, and $\mathbf{x_i}$ indicates the spatial location of the grid node $i$. And we can also define the gradients:
+Where q is the $x,y$ or $z$th component of $\mathbf{x - x_i}/h$, and $\mathbf{x_i}$ indicates the spatial location of the grid node $i$. And we can also define the gradients :
 
 $$
-\nabla_{\mathbf{x}} N(q) = \frac{1}{h} \nabla_{\mathbf{q}} N(q)
-$$
-
-The kernel centered around the grid node $i$ is then defined as
-
-$$
-w_\mathbf{i} = N(\tilde{x} - x_\mathbf{i})\cdot N(\tilde{y} - y_\mathbf{i})\cdot N(\tilde{z} - z_\mathbf{i})
+\nabla_{\mathbf{x}} N = \frac{1}{h} \nabla_{\mathbf{q}} N
 $$
 
 Note the $\frac{1}{h}$ comes from the chain rule.
 
-<br>To rasterize a physical property $a_p$ of particle $p$ onto a gridnode, we compute
+The kernel centered around the grid node $i$ is then defined as
 
-$$ a_\mathbf{i} = \Sigma_{p} a_p N() $$
+$$
+w_\mathbf{i}(\tilde{\mathbf{x}}) = N(\tilde{x} - x_\mathbf{i})\cdot N(\tilde{y} - y_\mathbf{i})\cdot N(\tilde{z} - z_\mathbf{i})
+$$
+
+
+Using the kernel defined above, to rasterize a physical property $a_p$ of particle $p$ onto a gridnode, we then can simply compute
+
+$$ a_\mathbf{i} = \Sigma_{p} a_p N(\mathbf{x}_p) $$
+
+where $a_\mathbf{i}$ is the rasterized quantity, $a_p$ is the physical quantity defined on the material particle, and $\mathbf{x}_p$ is the spatial coordinate of the material point.
 
 <h5>2.4&emsp;Complete Algorithm</h5>
+
+    <div align="center">
+    <table style="width=100%">
+      <tr>
+        <td align="middle">
+        <img src="images/mpm_algorithm.png" width=40% />
+        <div class="caption">Image Credit : <i>Stomakhin et al, 2013</i></div>
+        </td>
+      </tr>
+    </table>
+  </div>  
 
 The complete procedure regarding the Material Point method can be summarized as the following: 
 <ol>
@@ -171,7 +185,8 @@ This will be further discussed in the final version.
 <a href="https://youtu.be/mNk1V3WUGZc">Introduction Video</a>
 <br>
 <a href="https://www.youtube.com/watch?v=om3VhdoDeT4">Simulation Animation Only</a>
-
+<br>
+<a href="https://github.com/changyoonpark/mpm">MPM Implementation Repository</a>
 <br><br>
 <hr>
 
